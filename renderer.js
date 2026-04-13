@@ -144,7 +144,7 @@ async function pickFile(targetInput) {
   }
 
   targetInput.value = result.filePath;
-  setStatus("ファイルを選択しました");
+  setStatus("File selected");
 }
 
 pickOldBtn.addEventListener("click", async () => {
@@ -160,26 +160,26 @@ runDiffBtn.addEventListener("click", async () => {
   const newPath = newPathInput.value.trim();
 
   if (!oldPath || !newPath) {
-    setStatus("古いHTMLと新しいHTMLを両方選択してください", true);
+    setStatus("Please select both old and new HTML files", true);
     return;
   }
 
-  setStatus("差分を生成しています...");
+  setStatus("Generating diff...");
   runDiffBtn.disabled = true;
 
   try {
     const result = await window.api.generateDiff(oldPath, newPath);
     if (!result.ok) {
-      setStatus(`差分生成に失敗: ${result.error}`, true);
+      setStatus(`Failed to generate diff: ${result.error}`, true);
       return;
     }
 
     latestDiffHtml = result.diffHtml;
     previewFrame.srcdoc = result.diffHtml;
     saveDiffBtn.dataset.defaultPath = `${result.outputDir}\\${result.outputName}`;
-    setStatus("差分を生成しました");
+    setStatus("Diff generated");
   } catch (error) {
-    setStatus(`差分生成に失敗: ${String(error)}`, true);
+    setStatus(`Failed to generate diff: ${String(error)}`, true);
   } finally {
     runDiffBtn.disabled = false;
   }
@@ -187,7 +187,7 @@ runDiffBtn.addEventListener("click", async () => {
 
 saveDiffBtn.addEventListener("click", async () => {
   if (!latestDiffHtml) {
-    setStatus("先に差分を生成してください", true);
+    setStatus("Please generate a diff first", true);
     return;
   }
 
@@ -195,14 +195,14 @@ saveDiffBtn.addEventListener("click", async () => {
   const result = await window.api.saveDiff(latestDiffHtml, defaultPath);
 
   if (result.error) {
-    setStatus(`保存に失敗: ${result.error}`, true);
+    setStatus(`Failed to save: ${result.error}`, true);
     return;
   }
 
   if (result.canceled) {
-    setStatus("保存をキャンセルしました");
+    setStatus("Save canceled");
     return;
   }
 
-  setStatus(`保存しました: ${result.savedPath}`);
+  setStatus(`Saved: ${result.savedPath}`);
 });
