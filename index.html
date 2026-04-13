@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rendered HTML Diff</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-shape bg-shape-left"></div>
+    <div class="bg-shape bg-shape-right"></div>
+
+    <main class="app-shell">
+      <header class="app-header">
+        <h1>Rendered HTML Diff</h1>
+        <p>2つのHTMLを選択して、差分を色付きで可視化します。</p>
+      </header>
+
+      <section class="panel controls">
+        <div class="control-row">
+          <label>古いHTML</label>
+          <div class="picker-group">
+            <input
+              id="oldPath"
+              type="text"
+              readonly
+              placeholder="old.html を選択"
+            />
+            <button id="pickOld" type="button">選択</button>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <label>新しいHTML</label>
+          <div class="picker-group">
+            <input
+              id="newPath"
+              type="text"
+              readonly
+              placeholder="new.html を選択"
+            />
+            <button id="pickNew" type="button">選択</button>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button id="runDiff" type="button" class="primary">差分生成</button>
+          <button id="saveDiff" type="button">HTMLとして保存</button>
+          <span id="status" class="status">ファイルを選択してください</span>
+        </div>
+      </section>
+
+      <section class="panel preview">
+        <h2>差分プレビュー</h2>
+        <iframe id="previewFrame" title="Diff Preview"></iframe>
+      </section>
+    </main>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
