@@ -1,0 +1,21 @@
+{
+  "name": "renderedhtmldiff_electron",
+  "version": "1.0.0",
+  "description": "Rendered HTML Diff as an Electron GUI app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "diff-match-patch": "^1.0.5"
+  },
+  "devDependencies": {
+    "electron": "^41.2.0"
+  }
+}
