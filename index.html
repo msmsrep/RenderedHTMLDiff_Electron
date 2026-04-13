@@ -12,8 +12,14 @@
 
     <main class="app-shell">
       <header class="app-header">
-        <h1>Rendered HTML Diff</h1>
-        <p>Select two HTML files and visualize rendered text differences with color highlights.</p>
+        <div class="title-row">
+          <img class="title-icon" src="assets/icon-64.png" alt="App icon" />
+          <h1>Rendered HTML Diff</h1>
+        </div>
+        <p>
+          Select two HTML files and visualize rendered text differences with
+          color highlights.
+        </p>
       </header>
 
       <section class="panel controls">
@@ -44,7 +50,9 @@
         </div>
 
         <div class="action-row">
-          <button id="runDiff" type="button" class="primary">Generate Diff</button>
+          <button id="runDiff" type="button" class="primary">
+            Generate Diff
+          </button>
           <button id="saveDiff" type="button">Save as HTML</button>
           <span id="status" class="status">Please select files</span>
         </div>
