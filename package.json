@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "build": "electron-builder",
     "test": "echo \"No tests configured\""
   },
   "keywords": [],
@@ -16,6 +17,23 @@
     "diff-match-patch": "^1.0.5"
   },
   "devDependencies": {
-    "electron": "^41.2.0"
+    "electron": "^41.2.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.renderedhtmldiff.app",
+    "productName": "RenderedHTMLDiff",
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/icon-256.ico"
+    },
+    "nsis": {
+      "installerIcon": "assets/icon-256.ico",
+      "uninstallerIcon": "assets/icon-256.ico",
+      "installerHeaderIcon": "assets/icon-256.ico"
+    }
   }
 }
