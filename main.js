@@ -2,6 +2,8 @@ const path = require("path");
 const { app, BrowserWindow, dialog, ipcMain } = require("electron");
 const { buildDiffHtml } = require("./src/htmlDiff");
 
+app.setAppUserModelId("renderedhtmldiffelectron");
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,

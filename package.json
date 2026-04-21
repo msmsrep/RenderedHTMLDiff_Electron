@@ -4,9 +4,14 @@
   "description": "Rendered HTML Diff as an Electron GUI app",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron-forge start",
+    "start:packaged": "npm run package && .\\out\\renderedhtmldiff_electron-win32-x64\\renderedhtmldiff_electron.exe",
     "build": "electron-builder",
-    "test": "echo \"No tests configured\""
+    "test": "echo \"No tests configured\"",
+    "postinstall": "winapp restore && winapp node add-electron-debug-identity",
+    "package": "electron-forge package",
+    "package-msix": "npx electron-forge package && npx winapp pack ./out/renderedhtmldiff_electron-win32-x64 --output ./out --cert ./.env/msmsrep.pfx --cert-password msmsrep-password --manifest appxmanifest.xml",
+    "make": "electron-forge make"
   },
   "keywords": [],
   "author": "",
@@ -14,11 +19,20 @@
   "type": "commonjs",
   "dependencies": {
     "cheerio": "^1.2.0",
-    "diff-match-patch": "^1.0.5"
+    "diff-match-patch": "^1.0.5",
+    "electron-squirrel-startup": "^1.0.1"
   },
   "devDependencies": {
-    "electron": "^41.2.0",
-    "electron-builder": "^24.9.1"
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
+    "@electron-forge/plugin-fuses": "^7.11.1",
+    "@electron/fuses": "^1.8.0",
+    "@microsoft/winappcli": "^0.2.1",
+    "electron": "^41.2.0"
   },
   "build": {
     "appId": "com.renderedhtmldiff.app",
