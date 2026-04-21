@@ -1,2 +1,8 @@
 /node_modules
 /dist
+
+# Windows SDK packages and generated files
+/.winapp
+/out
+*.pfx
+/.env
