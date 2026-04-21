@@ -1,5 +1,7 @@
 # RenderedHTMLDiff_Electron
 
+[English](./readme.md) | [日本語](./readme.ja.md)
+
 An Electron-based desktop app for visualizing differences between two HTML files.
 Select two HTML files and visualize rendered text differences with color highlights.
 
@@ -9,7 +11,6 @@ Select two HTML files and visualize rendered text differences with color highlig
 - Character-level text diff highlighting
 - Instant preview in an embedded `iframe`
 - Save the diff result as an HTML file
-- English UI
 
 Highlight rules:
 
@@ -70,8 +71,3 @@ The default output filename is `diff_output.html`.
 - The implementation focuses on text-node differences.
 - Large structural/layout changes may not always place highlights where users expect.
 - Text under `script`, `style`, and `noscript` is excluded from diff processing.
-
-## Development Notes
-
-- The current `npm test` script is a placeholder.
-- App entry point: `main.js`
