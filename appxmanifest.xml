@@ -14,7 +14,7 @@
   <Identity
     Name="msmsrep.RenderedHTMLDiff"
     Publisher="CN=5E0CB4C9-E2E2-4B35-A7BB-09FE6EB44D12"
-    Version="1.0.1.0" />
+    Version="1.0.2.0" />
 
   <Properties>
     <DisplayName>Rendered HTML Diff</DisplayName>
@@ -39,7 +39,7 @@
       <uap:VisualElements
         DisplayName="Rendered HTML Diff"
         Description="Rendered HTML Diff_Electron"
-        BackgroundColor="auto"
+        BackgroundColor="black"
         Square150x150Logo="assets\icon-150.png"
         Square44x44Logo="assets\icon-44.png">
         <uap:DefaultTile Wide310x150Logo="assets\icon-150.png" />

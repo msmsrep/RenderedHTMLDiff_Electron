@@ -1,6 +1,6 @@
 const path = require("path");
 const { app, BrowserWindow, dialog, ipcMain } = require("electron");
-const { buildDiffHtml } = require("./src/htmlDiff");
+const { buildDiffHtml } = require("../htmlDiff");
 
 app.setAppUserModelId("renderedhtmldiffelectron");
 
@@ -11,7 +11,7 @@ function createWindow() {
     minWidth: 960,
     minHeight: 640,
     backgroundColor: "#f4efe6",
-    icon: path.join(__dirname, "assets", "icon-256.ico"),
+    icon: path.join(__dirname, "..", "..", "assets", "icon-256.ico"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -20,7 +20,7 @@ function createWindow() {
     },
   });
 
-  win.loadFile("index.html");
+  win.loadFile(path.join(__dirname, "..", "renderer", "index.html"));
 }
 
 ipcMain.handle("pick-html-file", async () => {
