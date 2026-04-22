@@ -1,6 +1,6 @@
 const fs = require("fs");
 const cheerio = require("cheerio");
-const { diff_match_patch } = require("diff-match-patch");
+const { diffChars } = require("diff");
 
 function collectTextNodes($) {
   const nodes = [];
@@ -36,9 +36,20 @@ function buildDiffHtml(oldPath, newPath) {
   const oldFull = oldNodes.map((n) => n.data).join("");
   const newFull = newNodes.map((n) => n.data).join("");
 
-  const dmp = new diff_match_patch();
-  const diffs = dmp.diff_main(oldFull, newFull);
-  dmp.diff_cleanupSemantic(diffs);
+  // Keep the same internal operation format: -1(delete), 0(equal), 1(insert).
+  const diffs = diffChars(oldFull, newFull)
+    .map((part) => {
+      if (part.removed) {
+        return [-1, part.value];
+      }
+
+      if (part.added) {
+        return [1, part.value];
+      }
+
+      return [0, part.value];
+    })
+    .filter(([, value]) => value.length > 0);
 
   let diffIndex = 0;
   let diffPos = 0;
