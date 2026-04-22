@@ -2,11 +2,11 @@
   "name": "renderedhtmldiff_electron",
   "version": "1.0.0",
   "description": "Rendered HTML Diff as an Electron GUI app",
-  "main": "main.js",
+  "main": "src/main/main.js",
   "scripts": {
     "start": "electron-forge start",
     "start:packaged": "npm run package && .\\out\\renderedhtmldiff_electron-win32-x64\\renderedhtmldiff_electron.exe",
-    "build": "electron-builder",
+    "build": "npm run package",
     "test": "echo \"No tests configured\"",
     "package": "electron-forge package",
     "package-msix": "npx electron-forge package && npx winapp pack ./out/renderedhtmldiff_electron-win32-x64 --output ./out --cert ./.env/msmsrep.pfx --cert-password msmsrep-password --manifest appxmanifest.xml",
