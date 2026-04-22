@@ -48,21 +48,6 @@ npm start
 
 The default output filename is `diff_output.html`.
 
-## Architecture
-
-- Main process: `main.js`
-	- Open file dialog
-	- Trigger diff generation
-	- Save dialog and file write
-- Renderer process: `renderer.js`
-	- UI interactions
-	- Diff preview rendering
-	- Status/error messaging
-- Diff engine: `src/htmlDiff.js`
-	- Parse HTML with `cheerio`
-	- Collect and merge text nodes
-	- Compute differences with `diff-match-patch`
-	- Inject highlighted spans into the new HTML
 
 ## Dependencies
 
