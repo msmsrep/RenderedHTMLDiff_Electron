@@ -1,6 +1,6 @@
 # RenderedHTMLDiff_Electron
 
-[English](./readme.md) | [日本語](./readme.ja.md)
+[English](./readme.md) | 日本語
 
 Electronで動く、HTMLファイル同士の差分可視化ツールです。  
 HTMLファイルを2つ選択し、レンダリングされたテキストの差分を色付きで可視化します。
@@ -8,6 +8,7 @@ HTMLファイルを2つ選択し、レンダリングされたテキストの差
 ## 特徴
 
 - GUIで`old.html`と`new.html`を選択
+- HTMLソースコードではなく、ブラウザで実際にレンダリングされたテキスト内容に対して差分を生成
 - 文字単位の差分を生成し、追加/削除を色分け表示
 - 差分結果を`iframe`で即時プレビュー
 - 差分結果を任意の場所へHTML保存
@@ -62,12 +63,34 @@ npm start
 
 ## 依存ライブラリ
 
-- `electron`
-- `cheerio`
-- `diff-match-patch`
+- [cheerio](https://github.com/cheeriojs/cheerio)
+- [diff-match-patch](https://github.com/JackuB/diff-match-patch)
+→古いので変更する
 
 ## 既知の制約
 
-- 主にテキストノードの差分に着目した実装です。
-- レイアウト構造の大きな差異があるHTMLでは、期待通りの位置に差分マークが出ない場合があります。
-- `script`/`style`/`noscript`配下のテキストは差分対象外です。
+- 主にテキストノードの差分に着目した実装です
+- レイアウト構造の大きな差異があるHTMLでは、期待通りの位置に差分マークが出ない場合があります
+- `script`/`style`/`noscript`配下のテキストは差分対象外です
+
+## ライセンス
+このプロジェクトは MIT Licenseのもとで公開しています
+
+## プライバシーポリシー
+最終更新日：2026年4月22日
+
+### データの収集について
+本アプリは、ユーザーの個人情報およびデータを一切収集しません
+
+### 処理の仕組み
+ユーザーが選択したHTMLファイルをアプリ内で処理します
+差分処理したHTMLのレンダリングはローカルで完結し、外部サーバーへのデータ送信は行いません
+
+### 外部サービスへのアクセス
+本アプリは、ユーザーのデータを外部へ送信しません
+
+### Cookieおよびトラッキング
+本アプリはCookie、ローカルストレージ、トラッキング技術を使用しません
+
+### お問い合わせ
+プライバシー・その他ご質問は、[GitHub Issues](https://github.com/msmsrep/RenderedHTMLDiff_Electron/issues) までお寄せください

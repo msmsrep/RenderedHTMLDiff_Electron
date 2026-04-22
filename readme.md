@@ -1,6 +1,9 @@
 # RenderedHTMLDiff_Electron
 
-[English](./readme.md) | [日本語](./readme.ja.md)
+English | [日本語](./readme.ja.md)
+
+透過にする参考
+https://stackoverflow.com/questions/31735562/make-app-icon-on-task-bar-have-a-transparent-background-uwa?utm_source=copilot.com
 
 An Electron-based desktop app for visualizing differences between two HTML files.
 Select two HTML files and visualize rendered text differences with color highlights.
@@ -8,6 +11,7 @@ Select two HTML files and visualize rendered text differences with color highlig
 ## Features
 
 - GUI-based file selection for `old.html` and `new.html`
+- Generate differences for the text content actually rendered in the browser, rather than for the HTML source code.
 - Character-level text diff highlighting
 - Instant preview in an embedded `iframe`
 - Save the diff result as an HTML file
