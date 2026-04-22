@@ -39,7 +39,7 @@
       <uap:VisualElements
         DisplayName="Rendered HTML Diff"
         Description="Rendered HTML Diff_Electron"
-        BackgroundColor="black"
+        BackgroundColor="auto"
         Square150x150Logo="assets\icon-150.png"
         Square44x44Logo="assets\icon-44.png">
         <uap:DefaultTile Wide310x150Logo="assets\icon-150.png" />

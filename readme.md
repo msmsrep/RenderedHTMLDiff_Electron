@@ -51,9 +51,8 @@ The default output filename is `diff_output.html`.
 
 ## Dependencies
 
-- `electron`
-- `cheerio`
-- `diff`
+- [cheerio](https://github.com/cheeriojs/cheerio)
+- [diff](https://github.com/kpdecker/jsdiff)
 
 ## Known Limitations
 
