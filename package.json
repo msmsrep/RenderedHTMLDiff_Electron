@@ -8,7 +8,6 @@
     "start:packaged": "npm run package && .\\out\\renderedhtmldiff_electron-win32-x64\\renderedhtmldiff_electron.exe",
     "build": "electron-builder",
     "test": "echo \"No tests configured\"",
-    "postinstall": "winapp restore && winapp node add-electron-debug-identity",
     "package": "electron-forge package",
     "package-msix": "npx electron-forge package && npx winapp pack ./out/renderedhtmldiff_electron-win32-x64 --output ./out --cert ./.env/msmsrep.pfx --cert-password msmsrep-password --manifest appxmanifest.xml",
     "make": "electron-forge make"
@@ -19,8 +18,7 @@
   "type": "commonjs",
   "dependencies": {
     "cheerio": "^1.2.0",
-    "diff-match-patch": "^1.0.5",
-    "electron-squirrel-startup": "^1.0.1"
+    "diff-match-patch": "^1.0.5"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.11.1",
@@ -48,6 +46,15 @@
       "installerIcon": "assets/icon-256.ico",
       "uninstallerIcon": "assets/icon-256.ico",
       "installerHeaderIcon": "assets/icon-256.ico"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "Licenses",
+        "to": "Licenses",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
   }
 }
