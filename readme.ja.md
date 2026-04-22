@@ -45,21 +45,6 @@ npm start
 
 保存時のデフォルトファイル名は`diff_output.html`です。
 
-## 仕組み（実装概要）
-
-- メインプロセス: `main.js`
-	- ファイル選択ダイアログ
-	- 差分生成処理の呼び出し
-	- 保存ダイアログとファイル書き込み
-- レンダラープロセス: `renderer.js`
-	- UI操作
-	- プレビュー表示
-	- 状態メッセージ制御
-- 差分ロジック: `src/htmlDiff.js`
-	- `cheerio`でHTMLを解析
-	- テキストノードを抽出して結合
-	- `diff-match-patch`で差分計算
-	- 差分を`span`装飾として新HTMLへ埋め込み
 
 ## 依存ライブラリ
 
@@ -74,7 +59,7 @@ npm start
 - `script`/`style`/`noscript`配下のテキストは差分対象外です
 
 ## ライセンス
-このプロジェクトは MIT Licenseのもとで公開しています
+このプロジェクトは [MIT License](./Licenses/License.txt)のもとで公開しています
 
 ## プライバシーポリシー
 最終更新日：2026年4月22日
