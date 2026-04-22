@@ -5,6 +5,10 @@ module.exports = {
   packagerConfig: {
     asar: true,
     icon: "./assets/icon-256.ico",
+    // ライセンスの追加
+    extraResource: [
+      "Licenses"
+    ]
   },
   rebuildConfig: {},
   makers: [
