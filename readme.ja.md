@@ -49,8 +49,7 @@ npm start
 ## 依存ライブラリ
 
 - [cheerio](https://github.com/cheeriojs/cheerio)
-- [diff-match-patch](https://github.com/JackuB/diff-match-patch)
-→古いので変更する
+- [diff](https://github.com/kpdecker/jsdiff)
 
 ## 既知の制約
 

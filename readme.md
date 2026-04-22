@@ -53,7 +53,7 @@ The default output filename is `diff_output.html`.
 
 - `electron`
 - `cheerio`
-- `diff-match-patch`
+- `diff`
 
 ## Known Limitations
 
