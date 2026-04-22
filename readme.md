@@ -2,9 +2,6 @@
 
 English | [日本語](./readme.ja.md)
 
-透過にする参考
-https://stackoverflow.com/questions/31735562/make-app-icon-on-task-bar-have-a-transparent-background-uwa?utm_source=copilot.com
-
 An Electron-based desktop app for visualizing differences between two HTML files.
 Select two HTML files and visualize rendered text differences with color highlights.
 
@@ -59,3 +56,32 @@ The default output filename is `diff_output.html`.
 - The implementation focuses on text-node differences.
 - Large structural/layout changes may not always place highlights where users expect.
 - Text under `script`, `style`, and `noscript` is excluded from diff processing.
+
+## License
+
+This project is published under the [MIT License](./Licenses/License.txt).
+
+## Privacy Policy
+
+Last updated: April 22, 2026
+
+### Data Collection
+
+This app does not collect any personal information or user data.
+
+### How Processing Works
+
+The HTML files selected by the user are processed inside the app.
+Rendering and diff processing are completed locally, and no data is sent to external servers.
+
+### External Service Access
+
+This app does not transmit user data to external services.
+
+### Cookies and Tracking
+
+This app does not use cookies, local storage, or tracking technologies.
+
+### Contact
+
+For privacy-related or other questions, please use [GitHub Issues](https://github.com/msmsrep/RenderedHTMLDiff_Electron/issues).
