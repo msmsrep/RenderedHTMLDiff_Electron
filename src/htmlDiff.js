@@ -115,9 +115,7 @@ async function buildDiffHtml(oldPath, newPath, mode) {
 
       if (op === OP_REMOVED) {
         const delChunk = chunkText.slice(diffPos, diffPos + remainingInDiff);
-        frag.push(
-          `<span class="diff-removed">${escapeHtml(delChunk)}</span>`,
-        );
+        frag.push(`<span class="diff-removed">${escapeHtml(delChunk)}</span>`);
         diffPos += remainingInDiff;
         advanceDiff();
         continue;
@@ -140,9 +138,7 @@ async function buildDiffHtml(oldPath, newPath, mode) {
       if (op === OP_ADDED) {
         const take = Math.min(remainingInDiff, text.length - i);
         const piece = chunkText.slice(diffPos, diffPos + take);
-        frag.push(
-          `<span class="diff-added">${escapeHtml(piece)}</span>`,
-        );
+        frag.push(`<span class="diff-added">${escapeHtml(piece)}</span>`);
         i += take;
         diffPos += take;
 
@@ -167,9 +163,7 @@ async function buildDiffHtml(oldPath, newPath, mode) {
 
       if (op2 === OP_REMOVED) {
         const delChunk = chunk2.slice(diffPos, diffPos + remaining2);
-        frag.push(
-          `<span class="diff-removed">${escapeHtml(delChunk)}</span>`,
-        );
+        frag.push(`<span class="diff-removed">${escapeHtml(delChunk)}</span>`);
         diffPos += remaining2;
         advanceDiff();
         continue;
