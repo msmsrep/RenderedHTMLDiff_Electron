@@ -15,7 +15,7 @@ let previewObserver = null;
 let previewPlaceholder = null;
 
 const PREVIEW_MIN_HEIGHT = 480;
-const PREVIEW_MAX_HEIGHT = 800;
+const PREVIEW_MAX_HEIGHT = 600;
 
 function syncPreviewHeight() {
   const doc = previewFrame.contentDocument;
