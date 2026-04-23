@@ -2,6 +2,11 @@
 
 English | [日本語](./readme.ja.md)
 
+Available on the Microsoft Store!
+
+https://apps.microsoft.com/detail/9mtvd87v16dq?hl=en-us&gl=US&ocid=pdpshare
+
+
 An Electron-based desktop app for visualizing differences between two HTML files.
 Select two HTML files and visualize rendered text differences with color highlights.
 
