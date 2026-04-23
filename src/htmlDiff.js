@@ -54,8 +54,8 @@ function buildDiffHtml(oldPath, newPath, mode) {
   const oldHtml = fs.readFileSync(oldPath, "utf8");
   const newHtml = fs.readFileSync(newPath, "utf8");
 
-  const $old = cheerio.load(oldHtml, { decodeEntities: false });
-  const $new = cheerio.load(newHtml, { decodeEntities: false });
+  const $old = cheerio.load(oldHtml);
+  const $new = cheerio.load(newHtml);
 
   const oldNodes = collectTextNodes($old);
   const newNodes = collectTextNodes($new);
@@ -201,6 +201,8 @@ function buildDiffHtml(oldPath, newPath, mode) {
       continue;
     }
 
+    // OP_ADDED / OP_SAME がノード処理後に残った場合（通常は発生しない）
+    console.warn(`[htmlDiff] unexpected trailing diff op=${op} at index=${diffIndex}, pos=${diffPos}`);
     break;
   }
 
