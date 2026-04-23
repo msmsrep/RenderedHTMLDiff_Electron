@@ -2,7 +2,19 @@ const fs = require("fs");
 const cheerio = require("cheerio");
 const { diffChars } = require("diff");
 
+// diff操作の種別定数
+const OP_REMOVED = -1;
+const OP_SAME = 0;
+const OP_ADDED = 1;
 
+// HTMLエスケープ（XSS対策）
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 // HTML内の「テキストノード」だけを収集する処。
 // script / style / noscript 内のテキストは除外
@@ -55,14 +67,14 @@ function buildDiffHtml(oldPath, newPath) {
   const diffs = diffChars(oldFull, newFull)
     .map((part) => {
       if (part.removed) {
-        return [-1, part.value];
+        return [OP_REMOVED, part.value];
       }
 
       if (part.added) {
-        return [1, part.value];
+        return [OP_ADDED, part.value];
       }
 
-      return [0, part.value];
+      return [OP_SAME, part.value];
     })
     .filter(([, value]) => value.length > 0);
 
@@ -96,20 +108,20 @@ function buildDiffHtml(oldPath, newPath) {
         continue;
       }
 
-      if (op === -1) {
+      if (op === OP_REMOVED) {
         const delChunk = chunkText.slice(diffPos, diffPos + remainingInDiff);
         frag.push(
-          `<span style=\"background:#fbb6b6;text-decoration:line-through;\">${delChunk}</span>`,
+          `<span style="background:#fbb6b6;text-decoration:line-through;">${escapeHtml(delChunk)}</span>`,
         );
         diffPos += remainingInDiff;
         advanceDiff();
         continue;
       }
 
-      if (op === 0) {
+      if (op === OP_SAME) {
         const take = Math.min(remainingInDiff, text.length - i);
         const piece = chunkText.slice(diffPos, diffPos + take);
-        frag.push(piece);
+        frag.push(escapeHtml(piece));
         i += take;
         diffPos += take;
 
@@ -120,10 +132,12 @@ function buildDiffHtml(oldPath, newPath) {
         continue;
       }
 
-      if (op === 1) {
+      if (op === OP_ADDED) {
         const take = Math.min(remainingInDiff, text.length - i);
         const piece = chunkText.slice(diffPos, diffPos + take);
-        frag.push(`<span style=\"background:#d4fcbc;\">${piece}</span>`);
+        frag.push(
+          `<span style="background:#d4fcbc;">${escapeHtml(piece)}</span>`,
+        );
         i += take;
         diffPos += take;
 
@@ -146,10 +160,10 @@ function buildDiffHtml(oldPath, newPath) {
         continue;
       }
 
-      if (op2 === -1) {
+      if (op2 === OP_REMOVED) {
         const delChunk = chunk2.slice(diffPos, diffPos + remaining2);
         frag.push(
-          `<span style=\"background:#fbb6b6;text-decoration:line-through;\">${delChunk}</span>`,
+          `<span style="background:#fbb6b6;text-decoration:line-through;">${escapeHtml(delChunk)}</span>`,
         );
         diffPos += remaining2;
         advanceDiff();
@@ -176,9 +190,9 @@ function buildDiffHtml(oldPath, newPath) {
       continue;
     }
 
-    if (op === -1) {
+    if (op === OP_REMOVED) {
       $new("body").append(
-        `<span style=\"background:#fbb6b6;text-decoration:line-through;\">${text.slice(diffPos)}</span>`,
+        `<span style="background:#fbb6b6;text-decoration:line-through;">${escapeHtml(text.slice(diffPos))}</span>`,
       );
       advanceDiff();
       continue;
