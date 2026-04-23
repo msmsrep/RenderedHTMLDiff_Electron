@@ -1,6 +1,6 @@
 const fs = require("fs");
 const cheerio = require("cheerio");
-const { diffChars } = require("diff");
+const { diffChars, diffWords, diffLines } = require("diff");
 
 // diff操作の種別定数
 const OP_REMOVED = -1;
@@ -41,15 +41,16 @@ function collectTextNodes($) {
 }
 
 //  2つのHTMLファイルを比較し、差分をハイライトしたHTMLを生成する
+//  mode: 'chars'（文字）| 'words'（単語）| 'lines'（行）
 //  処理の流れ
 //  HTMLを読み込む
 //  cheerioでパース
 //  テキストノードを抽出
 //  全テキストを連結して一つの文字列にする
-//  diffCharsで文字単位の差分を計算
+//  指定モードの diff 関数で差分を計算
 //  newHTMLをベースにして、テキストノードへ差分を埋め込む
 //  削除部分は赤背景＋取り消し線、追加部分は緑背景で表示
-function buildDiffHtml(oldPath, newPath) {
+function buildDiffHtml(oldPath, newPath, mode) {
   const oldHtml = fs.readFileSync(oldPath, "utf8");
   const newHtml = fs.readFileSync(newPath, "utf8");
 
@@ -62,9 +63,11 @@ function buildDiffHtml(oldPath, newPath) {
   const oldFull = oldNodes.map((n) => n.data).join("");
   const newFull = newNodes.map((n) => n.data).join("");
 
-  // diffCharsで文字単位の差分を取得
+  // 指定モードで差分を取得
   // -1: 削除、0: 同じ、1: 追加
-  const diffs = diffChars(oldFull, newFull)
+  const diffFn =
+    mode === "words" ? diffWords : mode === "lines" ? diffLines : diffChars;
+  const diffs = diffFn(oldFull, newFull)
     .map((part) => {
       if (part.removed) {
         return [OP_REMOVED, part.value];

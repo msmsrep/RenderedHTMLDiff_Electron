@@ -3,6 +3,7 @@ const newPathInput = document.getElementById("newPath");
 const statusEl = document.getElementById("status");
 const previewFrame = document.getElementById("previewFrame");
 const previewPanel = document.querySelector(".preview");
+const diffModeSelect = document.getElementById("diffMode");
 
 const pickOldBtn = document.getElementById("pickOld");
 const pickNewBtn = document.getElementById("pickNew");
@@ -155,7 +156,7 @@ pickNewBtn.addEventListener("click", async () => {
   await pickFile(newPathInput);
 });
 
-runDiffBtn.addEventListener("click", async () => {
+async function generateAndPreviewDiff() {
   const oldPath = oldPathInput.value.trim();
   const newPath = newPathInput.value.trim();
 
@@ -167,8 +168,10 @@ runDiffBtn.addEventListener("click", async () => {
   setStatus("Generating diff...");
   runDiffBtn.disabled = true;
 
+  const mode = diffModeSelect ? diffModeSelect.value : "chars";
+
   try {
-    const result = await window.api.generateDiff(oldPath, newPath);
+    const result = await window.api.generateDiff(oldPath, newPath, mode);
     if (!result.ok) {
       setStatus(`Failed to generate diff: ${result.error}`, true);
       return;
@@ -183,7 +186,13 @@ runDiffBtn.addEventListener("click", async () => {
   } finally {
     runDiffBtn.disabled = false;
   }
-});
+}
+
+runDiffBtn.addEventListener("click", generateAndPreviewDiff);
+
+if (diffModeSelect) {
+  diffModeSelect.addEventListener("change", generateAndPreviewDiff);
+}
 
 saveDiffBtn.addEventListener("click", async () => {
   if (!latestDiffHtml) {
