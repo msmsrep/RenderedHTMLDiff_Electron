@@ -2,6 +2,10 @@
 
 [English](./readme.md) | 日本語
 
+Microsoft Storeから入手できます！
+
+https://apps.microsoft.com/detail/9MTVD87V16DQ?hl=ja-jp&gl=JP&ocid=pdpshare
+
 Electronで動く、HTMLファイル同士の差分可視化ツールです。  
 HTMLファイルを2つ選択し、レンダリングされたテキストの差分を色付きで可視化します。
 
