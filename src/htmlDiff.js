@@ -50,9 +50,11 @@ function collectTextNodes($) {
 //  指定モードの diff 関数で差分を計算
 //  newHTMLをベースにして、テキストノードへ差分を埋め込む
 //  削除部分は赤背景＋取り消し線、追加部分は緑背景で表示
-function buildDiffHtml(oldPath, newPath, mode) {
-  const oldHtml = fs.readFileSync(oldPath, "utf8");
-  const newHtml = fs.readFileSync(newPath, "utf8");
+async function buildDiffHtml(oldPath, newPath, mode) {
+  const [oldHtml, newHtml] = await Promise.all([
+    fs.promises.readFile(oldPath, "utf8"),
+    fs.promises.readFile(newPath, "utf8"),
+  ]);
 
   const $old = cheerio.load(oldHtml);
   const $new = cheerio.load(newHtml);
@@ -114,7 +116,7 @@ function buildDiffHtml(oldPath, newPath, mode) {
       if (op === OP_REMOVED) {
         const delChunk = chunkText.slice(diffPos, diffPos + remainingInDiff);
         frag.push(
-          `<span style="background:#fbb6b6;text-decoration:line-through;">${escapeHtml(delChunk)}</span>`,
+          `<span class="diff-removed">${escapeHtml(delChunk)}</span>`,
         );
         diffPos += remainingInDiff;
         advanceDiff();
@@ -139,7 +141,7 @@ function buildDiffHtml(oldPath, newPath, mode) {
         const take = Math.min(remainingInDiff, text.length - i);
         const piece = chunkText.slice(diffPos, diffPos + take);
         frag.push(
-          `<span style="background:#d4fcbc;">${escapeHtml(piece)}</span>`,
+          `<span class="diff-added">${escapeHtml(piece)}</span>`,
         );
         i += take;
         diffPos += take;
@@ -166,7 +168,7 @@ function buildDiffHtml(oldPath, newPath, mode) {
       if (op2 === OP_REMOVED) {
         const delChunk = chunk2.slice(diffPos, diffPos + remaining2);
         frag.push(
-          `<span style="background:#fbb6b6;text-decoration:line-through;">${escapeHtml(delChunk)}</span>`,
+          `<span class="diff-removed">${escapeHtml(delChunk)}</span>`,
         );
         diffPos += remaining2;
         advanceDiff();
@@ -195,7 +197,7 @@ function buildDiffHtml(oldPath, newPath, mode) {
 
     if (op === OP_REMOVED) {
       $new("body").append(
-        `<span style="background:#fbb6b6;text-decoration:line-through;">${escapeHtml(text.slice(diffPos))}</span>`,
+        `<span class="diff-removed">${escapeHtml(text.slice(diffPos))}</span>`,
       );
       advanceDiff();
       continue;
@@ -207,6 +209,12 @@ function buildDiffHtml(oldPath, newPath, mode) {
     );
     break;
   }
+
+  // diff用スタイルを <head> に注入（インラインスタイルの代わりにクラスを使用）
+  $new("head").append(`<style>
+.diff-added   { background: #d4fcbc; }
+.diff-removed { background: #fbb6b6; text-decoration: line-through; }
+</style>`);
 
   return $new.html();
 }
