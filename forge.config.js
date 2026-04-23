@@ -4,11 +4,18 @@ const { FuseV1Options, FuseVersion } = require("@electron/fuses");
 module.exports = {
   packagerConfig: {
     asar: true,
+    prune: true,
     icon: "./assets/icon-256.ico",
+    // Exclude local build artifacts and tooling folders from app.asar.
+    ignore: [
+      /^\/out($|\/)/,
+      /^\/dist($|\/)/,
+      /^\/\.winapp($|\/)/,
+      /^\/\.env($|\/)/,
+      /^\/\.git($|\/)/,
+    ],
     // ライセンスの追加
-    extraResource: [
-      "Licenses"
-    ]
+    extraResource: ["Licenses"],
   },
   rebuildConfig: {},
   makers: [
