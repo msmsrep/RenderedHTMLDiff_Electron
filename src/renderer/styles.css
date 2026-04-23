@@ -115,7 +115,8 @@ body {
   gap: 10px;
 }
 
-input {
+input,
+select {
   width: 100%;
   border: 1px solid #c8b58f;
   border-radius: 10px;
@@ -123,6 +124,11 @@ input {
   padding: 10px 12px;
   color: var(--ink);
   font-family: "IBM Plex Mono", monospace;
+}
+
+select {
+  width: auto;
+  cursor: pointer;
 }
 
 button {
@@ -164,6 +170,28 @@ button.primary {
   margin-left: auto;
   font-size: 0.92rem;
   opacity: 0.9;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.preview-header h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.preview-header .mode-label {
+  font-weight: 700;
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.preview-header select {
+  width: auto;
 }
 
 .preview {
