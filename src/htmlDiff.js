@@ -202,7 +202,9 @@ function buildDiffHtml(oldPath, newPath, mode) {
     }
 
     // OP_ADDED / OP_SAME がノード処理後に残った場合（通常は発生しない）
-    console.warn(`[htmlDiff] unexpected trailing diff op=${op} at index=${diffIndex}, pos=${diffPos}`);
+    console.warn(
+      `[htmlDiff] unexpected trailing diff op=${op} at index=${diffIndex}, pos=${diffPos}`,
+    );
     break;
   }
 
