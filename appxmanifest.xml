@@ -14,7 +14,7 @@
   <Identity
     Name="msmsrep.RenderedHTMLDiff"
     Publisher="CN=5E0CB4C9-E2E2-4B35-A7BB-09FE6EB44D12"
-    Version="1.0.5.0" />
+    Version="1.0.6.0" />
 
   <Properties>
     <DisplayName>Rendered HTML Diff</DisplayName>
@@ -23,11 +23,12 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.18362.0" MaxVersionTested="10.0.26200.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.18362.0"
+      MaxVersionTested="10.0.26200.0" />
   </Dependencies>
 
   <Resources>
-    <Resource Language="en-us"/>
+    <Resource Language="en-us" />
   </Resources>
 
   <Applications>

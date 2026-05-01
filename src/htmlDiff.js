@@ -1,8 +1,20 @@
 const fs = require("fs");
 const cheerio = require("cheerio");
-const { diffChars } = require("diff");
+const { diffChars, diffWords, diffLines } = require("diff");
 
+// diff操作の種別定数
+const OP_REMOVED = -1;
+const OP_SAME = 0;
+const OP_ADDED = 1;
 
+// HTMLエスケープ（XSS対策）
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 // HTML内の「テキストノード」だけを収集する処。
 // script / style / noscript 内のテキストは除外
@@ -29,20 +41,23 @@ function collectTextNodes($) {
 }
 
 //  2つのHTMLファイルを比較し、差分をハイライトしたHTMLを生成する
+//  mode: 'chars'（文字）| 'words'（単語）| 'lines'（行）
 //  処理の流れ
 //  HTMLを読み込む
 //  cheerioでパース
 //  テキストノードを抽出
 //  全テキストを連結して一つの文字列にする
-//  diffCharsで文字単位の差分を計算
+//  指定モードの diff 関数で差分を計算
 //  newHTMLをベースにして、テキストノードへ差分を埋め込む
 //  削除部分は赤背景＋取り消し線、追加部分は緑背景で表示
-function buildDiffHtml(oldPath, newPath) {
-  const oldHtml = fs.readFileSync(oldPath, "utf8");
-  const newHtml = fs.readFileSync(newPath, "utf8");
+async function buildDiffHtml(oldPath, newPath, mode) {
+  const [oldHtml, newHtml] = await Promise.all([
+    fs.promises.readFile(oldPath, "utf8"),
+    fs.promises.readFile(newPath, "utf8"),
+  ]);
 
-  const $old = cheerio.load(oldHtml, { decodeEntities: false });
-  const $new = cheerio.load(newHtml, { decodeEntities: false });
+  const $old = cheerio.load(oldHtml);
+  const $new = cheerio.load(newHtml);
 
   const oldNodes = collectTextNodes($old);
   const newNodes = collectTextNodes($new);
@@ -50,19 +65,21 @@ function buildDiffHtml(oldPath, newPath) {
   const oldFull = oldNodes.map((n) => n.data).join("");
   const newFull = newNodes.map((n) => n.data).join("");
 
-  // diffCharsで文字単位の差分を取得
+  // 指定モードで差分を取得
   // -1: 削除、0: 同じ、1: 追加
-  const diffs = diffChars(oldFull, newFull)
+  const diffFn =
+    mode === "words" ? diffWords : mode === "lines" ? diffLines : diffChars;
+  const diffs = diffFn(oldFull, newFull)
     .map((part) => {
       if (part.removed) {
-        return [-1, part.value];
+        return [OP_REMOVED, part.value];
       }
 
       if (part.added) {
-        return [1, part.value];
+        return [OP_ADDED, part.value];
       }
 
-      return [0, part.value];
+      return [OP_SAME, part.value];
     })
     .filter(([, value]) => value.length > 0);
 
@@ -96,20 +113,18 @@ function buildDiffHtml(oldPath, newPath) {
         continue;
       }
 
-      if (op === -1) {
+      if (op === OP_REMOVED) {
         const delChunk = chunkText.slice(diffPos, diffPos + remainingInDiff);
-        frag.push(
-          `<span style=\"background:#fbb6b6;text-decoration:line-through;\">${delChunk}</span>`,
-        );
+        frag.push(`<span class="diff-removed">${escapeHtml(delChunk)}</span>`);
         diffPos += remainingInDiff;
         advanceDiff();
         continue;
       }
 
-      if (op === 0) {
+      if (op === OP_SAME) {
         const take = Math.min(remainingInDiff, text.length - i);
         const piece = chunkText.slice(diffPos, diffPos + take);
-        frag.push(piece);
+        frag.push(escapeHtml(piece));
         i += take;
         diffPos += take;
 
@@ -120,10 +135,10 @@ function buildDiffHtml(oldPath, newPath) {
         continue;
       }
 
-      if (op === 1) {
+      if (op === OP_ADDED) {
         const take = Math.min(remainingInDiff, text.length - i);
         const piece = chunkText.slice(diffPos, diffPos + take);
-        frag.push(`<span style=\"background:#d4fcbc;\">${piece}</span>`);
+        frag.push(`<span class="diff-added">${escapeHtml(piece)}</span>`);
         i += take;
         diffPos += take;
 
@@ -146,11 +161,9 @@ function buildDiffHtml(oldPath, newPath) {
         continue;
       }
 
-      if (op2 === -1) {
+      if (op2 === OP_REMOVED) {
         const delChunk = chunk2.slice(diffPos, diffPos + remaining2);
-        frag.push(
-          `<span style=\"background:#fbb6b6;text-decoration:line-through;\">${delChunk}</span>`,
-        );
+        frag.push(`<span class="diff-removed">${escapeHtml(delChunk)}</span>`);
         diffPos += remaining2;
         advanceDiff();
         continue;
@@ -176,16 +189,26 @@ function buildDiffHtml(oldPath, newPath) {
       continue;
     }
 
-    if (op === -1) {
+    if (op === OP_REMOVED) {
       $new("body").append(
-        `<span style=\"background:#fbb6b6;text-decoration:line-through;\">${text.slice(diffPos)}</span>`,
+        `<span class="diff-removed">${escapeHtml(text.slice(diffPos))}</span>`,
       );
       advanceDiff();
       continue;
     }
 
+    // OP_ADDED / OP_SAME がノード処理後に残った場合（通常は発生しない）
+    console.warn(
+      `[htmlDiff] unexpected trailing diff op=${op} at index=${diffIndex}, pos=${diffPos}`,
+    );
     break;
   }
+
+  // diff用スタイルを <head> に注入（インラインスタイルの代わりにクラスを使用）
+  $new("head").append(`<style>
+.diff-added   { background: #d4fcbc; }
+.diff-removed { background: #fbb6b6; text-decoration: line-through; }
+</style>`);
 
   return $new.html();
 }

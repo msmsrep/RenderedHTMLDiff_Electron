@@ -38,8 +38,8 @@ ipcMain.handle("pick-html-file", async () => {
 
 ipcMain.handle("generate-diff", async (_event, payload) => {
   try {
-    const { oldPath, newPath } = payload;
-    const diffHtml = await buildDiffHtml(oldPath, newPath);
+    const { oldPath, newPath, mode } = payload;
+    const diffHtml = await buildDiffHtml(oldPath, newPath, mode);
 
     return {
       ok: true,
