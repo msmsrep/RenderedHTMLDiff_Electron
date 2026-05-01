@@ -67,7 +67,15 @@
       </section>
 
       <section class="panel preview">
-        <h2>Diff Preview</h2>
+        <div class="preview-header">
+          <h2>Diff Preview</h2>
+          <label class="mode-label" for="diffMode">Diff Mode</label>
+          <select id="diffMode">
+            <option value="chars">Characters</option>
+            <option value="words" selected>Words</option>
+            <option value="lines">Lines</option>
+          </select>
+        </div>
         <iframe id="previewFrame" title="Diff Preview"></iframe>
       </section>
     </main>
