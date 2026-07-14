@@ -23,10 +23,14 @@ function createWindow() {
   win.loadFile(path.join(__dirname, "..", "renderer", "index.html"));
 }
 
-ipcMain.handle("pick-html-file", async () => {
+ipcMain.handle("pick-input-file", async () => {
   const result = await dialog.showOpenDialog({
     properties: ["openFile"],
-    filters: [{ name: "HTML Files", extensions: ["html", "htm"] }],
+    filters: [
+      { name: "HTML / PDF Files", extensions: ["html", "htm", "pdf"] },
+      { name: "HTML Files", extensions: ["html", "htm"] },
+      { name: "PDF Files", extensions: ["pdf"] },
+    ],
   });
 
   if (result.canceled || result.filePaths.length === 0) {
