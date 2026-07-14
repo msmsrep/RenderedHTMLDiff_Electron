@@ -139,7 +139,7 @@ function setStatus(message, isError = false) {
 }
 
 async function pickFile(targetInput) {
-  const result = await window.api.pickHtmlFile();
+  const result = await window.api.pickInputFile();
   if (!result || result.canceled) {
     return;
   }
@@ -161,7 +161,7 @@ async function generateAndPreviewDiff() {
   const newPath = newPathInput.value.trim();
 
   if (!oldPath || !newPath) {
-    setStatus("Please select both old and new HTML files", true);
+    setStatus("Please select both old and new files", true);
     return;
   }
 

@@ -6,13 +6,14 @@ Microsoft Storeから入手できます！
 
 https://apps.microsoft.com/detail/9MTVD87V16DQ?hl=ja-jp&gl=JP&ocid=pdpshare
 
-Electronで動く、HTMLファイル同士の差分可視化ツールです。  
-HTMLファイルを2つ選択し、レンダリングされたテキストの差分を色付きで可視化します。
+Electronで動く、HTML/PDFファイル同士の差分可視化ツールです。  
+HTMLまたはPDFファイルを2つ選択し、レンダリングされたテキストの差分を色付きで可視化します。
 
 ## 特徴
 
-- GUIで`old.html`と`new.html`を選択
+- GUIで比較元/比較先ファイル（HTMLまたはPDF）を選択
 - HTMLソースコードではなく、ブラウザで実際にレンダリングされたテキスト内容に対して差分を生成
+- PDFは本文テキストを抽出して比較（HTMLとPDFの組み合わせ比較も可能）
 - 文字単位の差分を生成し、追加/削除を色分け表示
 - 差分結果を`iframe`で即時プレビュー
 - 差分結果を任意の場所へHTML保存
@@ -42,8 +43,8 @@ npm start
 
 ## 使い方
 
-1. 「古いHTML」の`選択`ボタンから比較元ファイルを指定
-2. 「新しいHTML」の`選択`ボタンから比較先ファイルを指定
+1. 「Old File」の`Choose`ボタンから比較元ファイル（HTMLまたはPDF）を指定
+2. 「New File」の`Choose`ボタンから比較先ファイル（HTMLまたはPDF）を指定
 3. `差分生成`を押してプレビューを確認
 4. `HTMLとして保存`で差分結果を保存
 
@@ -54,12 +55,15 @@ npm start
 
 - [cheerio](https://github.com/cheeriojs/cheerio)
 - [diff](https://github.com/kpdecker/jsdiff)
+- [pdfjs-dist](https://github.com/mozilla/pdf.js)
 
 ## 既知の制約
 
 - 主にテキストノードの差分に着目した実装です
 - レイアウト構造の大きな差異があるHTMLでは、期待通りの位置に差分マークが出ない場合があります
 - `script`/`style`/`noscript`配下のテキストは差分対象外です
+- PDFはテキストのみを比較対象とします（画像・レイアウトは対象外）。スキャンPDFなどテキスト情報を持たないPDFは比較できません
+- 比較先（New File）がPDFの場合、差分結果は抽出テキストを並べたシンプルなHTMLとして表示されます
 
 ## ライセンス
 このプロジェクトは [MIT License](./Licenses/License.txt)のもとで公開しています

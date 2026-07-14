@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const cheerio = require("cheerio");
 const { diffChars, diffWords, diffLines } = require("diff");
 
@@ -40,30 +41,111 @@ function collectTextNodes($) {
   return nodes;
 }
 
-//  2つのHTMLファイルを比較し、差分をハイライトしたHTMLを生成する
+// PDFからページ順にテキストを抽出する
+// pdf.js のテキストアイテムを連結し、行末（hasEOL）で改行を入れる
+async function extractPdfText(filePath) {
+  const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
+  const data = new Uint8Array(await fs.promises.readFile(filePath));
+  const doc = await pdfjsLib.getDocument({
+    data,
+    // 非埋め込みフォント解決用（テキスト抽出時の警告抑止）
+    standardFontDataUrl: path.join(
+      path.dirname(require.resolve("pdfjs-dist/package.json")),
+      "standard_fonts/",
+    ),
+    verbosity: pdfjsLib.VerbosityLevel.ERRORS,
+  }).promise;
+
+  try {
+    const pages = [];
+    for (let i = 1; i <= doc.numPages; i += 1) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+
+      let text = "";
+      for (const item of content.items) {
+        text += item.str;
+        if (item.hasEOL) {
+          text += "\n";
+        }
+      }
+
+      pages.push(text);
+      page.cleanup();
+    }
+
+    return pages.join("\n");
+  } finally {
+    await doc.destroy();
+  }
+}
+
+function isPdfPath(filePath) {
+  return path.extname(filePath).toLowerCase() === ".pdf";
+}
+
+// 入力ファイルを読み込み、比較用テキストと（HTMLの場合は）cheerioドキュメントを返す
+async function loadSource(filePath) {
+  if (isPdfPath(filePath)) {
+    const text = await extractPdfText(filePath);
+    return { kind: "pdf", text };
+  }
+
+  const html = await fs.promises.readFile(filePath, "utf8");
+  const $ = cheerio.load(html);
+  const nodes = collectTextNodes($);
+  return { kind: "html", $, nodes, text: nodes.map((n) => n.data).join("") };
+}
+
+// 新ファイルがPDFの場合、HTML構造がないため
+// 抽出テキストをそのまま並べたスタンドアロンHTMLとして差分を描画する
+function renderPlainDiffHtml(diffs) {
+  const body = diffs
+    .map(([op, value]) => {
+      if (op === OP_REMOVED) {
+        return `<span class="diff-removed">${escapeHtml(value)}</span>`;
+      }
+
+      if (op === OP_ADDED) {
+        return `<span class="diff-added">${escapeHtml(value)}</span>`;
+      }
+
+      return escapeHtml(value);
+    })
+    .join("");
+
+  return `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { font-family: system-ui, sans-serif; margin: 16px; }
+.pdf-diff { white-space: pre-wrap; word-break: break-word; font-size: 14px; line-height: 1.7; }
+.diff-added   { background: #d4fcbc; }
+.diff-removed { background: #fbb6b6; text-decoration: line-through; }
+</style>
+</head>
+<body><div class="pdf-diff">${body}</div></body>
+</html>`;
+}
+
+//  2つのファイル（HTML / PDF）を比較し、差分をハイライトしたHTMLを生成する
 //  mode: 'chars'（文字）| 'words'（単語）| 'lines'（行）
 //  処理の流れ
-//  HTMLを読み込む
-//  cheerioでパース
-//  テキストノードを抽出
+//  ファイルを読み込む（HTMLはcheerioでテキストノード抽出、PDFはpdf.jsでテキスト抽出）
 //  全テキストを連結して一つの文字列にする
 //  指定モードの diff 関数で差分を計算
-//  newHTMLをベースにして、テキストノードへ差分を埋め込む
+//  新ファイルがHTMLならそのHTMLをベースにテキストノードへ差分を埋め込む
+//  新ファイルがPDFなら抽出テキストベースのHTMLとして差分を描画する
 //  削除部分は赤背景＋取り消し線、追加部分は緑背景で表示
 async function buildDiffHtml(oldPath, newPath, mode) {
-  const [oldHtml, newHtml] = await Promise.all([
-    fs.promises.readFile(oldPath, "utf8"),
-    fs.promises.readFile(newPath, "utf8"),
+  const [oldSource, newSource] = await Promise.all([
+    loadSource(oldPath),
+    loadSource(newPath),
   ]);
 
-  const $old = cheerio.load(oldHtml);
-  const $new = cheerio.load(newHtml);
-
-  const oldNodes = collectTextNodes($old);
-  const newNodes = collectTextNodes($new);
-
-  const oldFull = oldNodes.map((n) => n.data).join("");
-  const newFull = newNodes.map((n) => n.data).join("");
+  const oldFull = oldSource.text;
+  const newFull = newSource.text;
 
   // 指定モードで差分を取得
   // -1: 削除、0: 同じ、1: 追加
@@ -82,6 +164,15 @@ async function buildDiffHtml(oldPath, newPath, mode) {
       return [OP_SAME, part.value];
     })
     .filter(([, value]) => value.length > 0);
+
+  // 新ファイルがPDFの場合は、埋め込み先のHTML構造がないので
+  // 抽出テキストベースのスタンドアロンHTMLとして描画する
+  if (newSource.kind === "pdf") {
+    return renderPlainDiffHtml(diffs);
+  }
+
+  const $new = newSource.$;
+  const newNodes = newSource.nodes;
 
   let diffIndex = 0;
   let diffPos = 0;
