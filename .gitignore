@@ -6,3 +6,4 @@
 /out
 *.pfx
 /.env
+mailmap.txt
